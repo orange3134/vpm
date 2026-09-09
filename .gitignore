@@ -1,2 +1,10 @@
-﻿.idea
-.vscode
+.idea/
+.vscode/
+.DS_Store
+__pycache__/
+dist/
+Website/vpm.json
+Website/index.json
+*.mpavatar
+*.bundle
+*.unitypackage

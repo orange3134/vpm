@@ -1,0 +1,15 @@
+{
+  "name": "AvatarNamecard.Exporter.Tests",
+  "references": [
+    "AvatarNamecard.Exporter.Editor",
+    "AvatarNamecard.AvatarPackage",
+    "AvatarNamecard.AvatarPackage.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "autoReferenced": false
+}

@@ -1,0 +1,11 @@
+{
+  "name": "AvatarNamecard.Exporter.Editor",
+  "references": [
+    "AvatarNamecard.AvatarPackage",
+    "AvatarNamecard.AvatarPackage.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": true
+}

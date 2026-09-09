@@ -1,0 +1,22 @@
+name: Validate Packages
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
+      - run: python3 scripts/build_release.py
+      - run: python3 scripts/build_listing.py --metadata dist/vpm-release.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exporter-packages
+          path: dist/
