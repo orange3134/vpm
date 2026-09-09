@@ -1,4 +1,41 @@
-# MEISHI Pop Exporter
+# pipipigiken Packages
+
+Unity・VRChat向けツールの共通VPM配布リストです。ユーザーが登録するURLは、ツールを増やしても **https://vpm.pipipigiken.jp/vpm.json** の1つを維持します。
+
+## 新しいツールを追加する
+
+**一覧はこのリポジトリに集約し、ツールのコード・ReleaseはツールごとのGitHubリポジトリで管理します。** 新しいツール専用のドメインやVCC追加URLは不要です。
+
+1. 新しいツールの公開リポジトリを用意します（例：`orange3134/new-tool`）。非公開の開発プロジェクトがある場合は、公開対象のパッケージだけを配布リポジトリへコピーします。
+2. パッケージに固有のID（例：`jp.pipipigiken.new-tool`）とバージョンを設定し、**ZIP直下にpackage.jsonがあるVPMパッケージ**をGitHub Releaseへ添付します。[公式パッケージテンプレート](https://github.com/vrchat-community/template-package)のReleaseも利用できます。Unitypackageを配布する場合は、そのツールのリリース処理でも生成します。
+3. このリポジトリの `source.json` の `githubRepos` に1行追加してpushします。
+
+```json
+"githubRepos": [
+  "orange3134/vpm",
+  "orange3134/new-tool"
+]
+```
+
+4. **Build Repo Listing** が各リポジトリの公開ReleaseからVPM ZIPを収集し、SHA-256を計算して同じ `vpm.json` と配布ページへ反映します。独自の `vpm-release.json` は新しいツールには不要です。
+
+今後の更新は各ツールのリポジトリで新しいReleaseを公開します。別リポジトリの更新は約1時間ごとのGitHub Actionsで取り込みます（実行時刻はGitHubの混雑等で遅れる場合があります）。すぐ反映する場合は、このリポジトリの **Actions → Build Repo Listing → Run workflow** を実行します。GitHub CLIでも実行できます。
+
+```bash
+gh workflow run build-listing.yml --repo orange3134/vpm
+```
+
+- ツールごとに独立したバージョン番号を使えます。全ツールの同時リリースは不要です。
+- 一覧のID `jp.pipipigiken.vpm` と追加URLは変更しません。既存ユーザーはリポジトリを追加し直す必要がなく、VCCで一覧を更新すると新しいパッケージが表示されます。新ツールのインストールはユーザー自身が選択します。
+- 公開済みのZIP・バージョンを削除・上書きしないでください。以前の一覧から消えたり、URLやハッシュが変わった場合は公開処理を停止します。同じID・バージョンが複数リポジトリから出た場合も停止します。
+- Draft / PrereleaseのReleaseは対象外です。安定版SemVerのパッケージを公開してください。ZIPは1ファイル256 MiBまでです。
+- VPM形式ではないZIP、Unitypackage単体、GitHub自動生成ソースアーカイブは一覧に取り込みません。
+- パッケージの依存宣言に、他の配布元にあるパッケージを指定した場合は、その配布元もVCCへ登録する必要があります。
+- GitHubの仕様により公開リポジトリの定期実行は長期間の無操作で無効になる場合があります。新しいツールを公開するときはActionsの状態を確認してください。
+
+現在のMEISHI Pop Exporterだけは、最初に構築した配布用ソースとReleaseをこのリポジトリ内に保持しています。既存のダウンロードURLを維持するため、そのまま運用できます。今後の別ツールを `distribution.json` に追加する必要はありません。これはMEISHI Popのパッケージ生成専用の設定です。
+
+## MEISHI Pop Exporter
 
 VRChatアバターのUnityプロジェクトから、MEISHI Pop!用の `.mpavatar` を書き出すEditor拡張です。公開テスト版です。
 
@@ -50,7 +87,7 @@ Unity **2022.3 / Built-in Render Pipeline** 向けです。iPhone用の出力に
 
 ## 配布構成
 
-このリポジトリにはエクスポーターとSDK非依存の共通形式のみを収録します。MEISHI Pop!アプリ本体、アバター、VRCSDK、NDMF、シェーダーなどの第三者パッケージは同梱しません。
+現在このリポジトリが直接収録するソースは、MEISHI PopのエクスポーターとSDK非依存の共通形式のみです。MEISHI Pop!アプリ本体、アバター、VRCSDK、NDMF、シェーダーなどの第三者パッケージは同梱しません。
 
 | 内容 | 場所 |
 |---|---|
@@ -60,11 +97,11 @@ Unity **2022.3 / Built-in Render Pipeline** 向けです。iPhone用の出力に
 | 配布用メタデータ・移行GUID | `distribution.json` |
 | GitHub Pages | `Website/` |
 
-公式 [template-package-listing](https://github.com/vrchat-community/template-package-listing) を元にしています。リリース内の `vpm-release.json` から全バージョンを収集するPython処理へ変更し、同じ内容を `vpm.json` / `index.json` で公開します。VCCの正式な追加URLは `vpm.json` です。
+公式 [template-package-listing](https://github.com/vrchat-community/template-package-listing) を元にしています。`source.json` で指定された複数リポジトリのVPM ZIPから全バージョンを収集するPython処理を使用し、同じ内容を `vpm.json` / `index.json` で公開します。VCCの正式な追加URLは `vpm.json` です。
 
-## 開発・リリース
+## MEISHI Popの開発・リリース
 
-通常のコード修正は非公開アプリ側の元パッケージで行い、このリポジトリへ必要なファイルだけ同期します。アプリの履歴やAssets全体をコピーしません。
+MEISHI Popのコード修正は非公開アプリ側の元パッケージで行い、このリポジトリへ必要なファイルだけ同期します。アプリの履歴やAssets全体をコピーしません。
 
 ```bash
 python3 scripts/sync_from_app.py --source /path/to/private-app-checkout

@@ -1,5 +1,5 @@
 {
-  "name": "MEISHI Pop! Packages",
+  "name": "pipipigiken Packages",
   "id": "jp.pipipigiken.vpm",
   "url": "https://vpm.pipipigiken.jp/vpm.json",
   "author": {
@@ -7,7 +7,7 @@
     "email": "56525091+orange3134@users.noreply.github.com",
     "url": "https://github.com/orange3134"
   },
-  "description": "MEISHI Pop!用アバターエクスポーター — 公開テスト版",
+  "description": "pipipigikenのUnity・VRChat向けツール配布リスト",
   "infoLink": {
     "url": "https://github.com/orange3134/vpm",
     "text": "View on GitHub"

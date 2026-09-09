@@ -1,6 +1,8 @@
 name: Build Repo Listing
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
   workflow_run:
     workflows: ['Release Exporter']
     types: [completed]
@@ -28,7 +30,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Build complete listing from published release metadata
+      - name: Collect all tools from registered GitHub repositories
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/build_listing.py

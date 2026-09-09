@@ -70,13 +70,13 @@ class PackagingTests(unittest.TestCase):
         previous['version'] = '0.1.0'
         for manifest in previous['packages'].values():
             manifest['version'] = '0.1.0'
-        listing = make_listing(self.source, [self.metadata, previous], self.config['packages'])
+        listing = make_listing(self.source, list(self.metadata['packages'].values()) + list(previous['packages'].values()))
         for package in listing['packages'].values():
             self.assertEqual(set(package['versions']), {self.metadata['version'], '0.1.0'})
         with self.assertRaises(ValueError):
-            make_listing(self.source, [], self.config['packages'])
+            make_listing(self.source, [])
         with self.assertRaises(ValueError):
-            make_listing(self.source, [self.metadata, self.metadata], self.config['packages'])
+            make_listing(self.source, list(self.metadata['packages'].values()) * 2)
 
 
 if __name__ == '__main__':

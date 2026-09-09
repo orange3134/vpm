@@ -26,3 +26,8 @@ summary { cursor: pointer; font-weight: 600; }
 footer { padding: 12px 4px; }
 :focus-visible { outline: 3px solid #4444b7; outline-offset: 3px; }
 @media (max-width: 540px) { main { padding: 28px 16px; } section { padding: 22px 18px; } .actions a { width: 100%; text-align: center; } .copy-row { flex-wrap: wrap; } .copy-row input { flex-basis: 100%; } }
+
+.package + .package { border-top: 1px solid #eee; margin-top: 22px; padding-top: 20px; }
+.package h3 { margin: 0; font-size: 18px; }
+.package p { margin: 6px 0; }
+.package-version { color: #62626d; font-size: 12px; overflow-wrap: anywhere; }

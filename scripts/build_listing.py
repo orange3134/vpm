@@ -1,81 +1,141 @@
 #!/usr/bin/env python3
-"""Rebuild the VPM listing from all published releases; keep every released version."""
+"""Collect VPM ZIP releases from all repositories in source.json."""
 import argparse
+import copy
+import hashlib
+import io
 import json
 import os
 from pathlib import Path
 import re
+import urllib.error
 import urllib.request
+import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
+MAX_ZIP_BYTES = 256 * 1024 * 1024
+MAX_MANIFEST_BYTES = 1024 * 1024
+VERSION = re.compile(r'(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:\+[0-9A-Za-z.-]+)?')
 
 
-def fetch_json(url, api=False):
-    headers = {'User-Agent': 'MEISHI-Pop-Listing'}
+def fetch_bytes(url, api=False, limit=MAX_ZIP_BYTES):
+    headers = {'User-Agent': 'pipipigiken-VPM-Listing'}
     if api and os.environ.get('GH_TOKEN'):
         headers['Authorization'] = 'Bearer ' + os.environ['GH_TOKEN']
     with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=60) as response:
-        return json.load(response)
+        data = response.read(limit + 1)
+    if len(data) > limit:
+        raise ValueError(f'Response exceeds size limit: {url}')
+    return data
 
 
-def releases(repository):
+def fetch_json(url, api=False):
+    return json.loads(fetch_bytes(url, api))
+
+
+def manifest_from_zip(data, url):
+    # Read only the root manifest; never extract arbitrary archive paths to disk.
+    with zipfile.ZipFile(io.BytesIO(data)) as archive:
+        entries = [item for item in archive.infolist() if item.filename == 'package.json']
+        if not entries:
+            return None  # Documentation/source archives are not VPM packages.
+        if len(entries) != 1 or entries[0].file_size > MAX_MANIFEST_BYTES:
+            raise ValueError(f'Ambiguous or oversized package.json: {url}')
+        with archive.open(entries[0]) as entry:
+            manifest = json.loads(entry.read(MAX_MANIFEST_BYTES + 1))
+    manifest['url'] = url
+    manifest['zipSHA256'] = hashlib.sha256(data).hexdigest()
+    return manifest
+
+
+def releases(repository, fetch=fetch_json, download=fetch_bytes):
+    if not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repository):
+        raise ValueError(f'Invalid GitHub repository: {repository}')
     page = 1
     while True:
-        batch = fetch_json(f'https://api.github.com/repos/{repository}/releases?per_page=100&page={page}', api=True)
+        batch = fetch(f'https://api.github.com/repos/{repository}/releases?per_page=100&page={page}', api=True)
         if not batch:
             break
         for release in batch:
             if release['draft'] or release['prerelease']:
                 continue
-            assets = {asset['name']: asset for asset in release['assets']}
-            if 'vpm-release.json' not in assets:
-                continue  # Ignore pre-automation releases unrelated to these packages.
-            metadata = fetch_json(assets['vpm-release.json']['browser_download_url'])
-            if release['tag_name'] != 'v' + metadata['version']:
-                raise ValueError('Release tag and metadata mismatch')
-            for manifest in metadata['packages'].values():
-                filename = manifest['url'].rsplit('/', 1)[-1]
-                if filename not in assets or assets[filename]['browser_download_url'] != manifest['url']:
-                    raise ValueError('Release is missing a referenced VPM ZIP')
-            if metadata['unitypackage'] not in assets:
-                raise ValueError('Release is missing its Unitypackage')
-            yield metadata
+            for asset in release['assets']:
+                if not asset['name'].lower().endswith('.zip'):
+                    continue
+                if asset.get('size', 0) > MAX_ZIP_BYTES:
+                    raise ValueError(f'ZIP is too large: {asset["name"]}')
+                manifest = manifest_from_zip(download(asset['browser_download_url']), asset['browser_download_url'])
+                if manifest is not None:
+                    yield manifest
         page += 1
 
 
-def make_listing(source, metadata, expected):
+def collect(source):
+    manifests = []
+    for repository in source.get('githubRepos', []):
+        manifests.extend(releases(repository))
+    # Also support the official template's explicit package ZIP URLs.
+    for package in source.get('packages', []):
+        for url in package['releases']:
+            manifest = manifest_from_zip(fetch_bytes(url), url)
+            if manifest is None or manifest['name'] != package['name']:
+                raise ValueError(f'Explicit package does not match its ZIP: {url}')
+            manifests.append(manifest)
+    return manifests
+
+
+def make_listing(source, manifests):
     listing = {key: source[key] for key in ('name', 'id', 'url')}
     listing['author'] = source['author']['name']
     listing['packages'] = {}
-    for release in metadata:
-        version = release['version']
-        if not re.fullmatch(r'\d+\.\d+\.\d+', version):
-            raise ValueError('Invalid release version')
-        if set(release['packages']) != set(expected):
-            raise ValueError('Unexpected public packages')
-        for name, manifest in release['packages'].items():
-            if manifest['name'] != name or manifest['version'] != version:
-                raise ValueError('Manifest version mismatch')
-            if not re.fullmatch(r'[0-9a-f]{64}', manifest['zipSHA256']):
-                raise ValueError('Missing ZIP integrity hash')
-            versions = listing['packages'].setdefault(name, {'versions': {}})['versions']
-            if version in versions:
-                raise ValueError('Duplicate release version')
-            versions[version] = manifest
+    for manifest in manifests:
+        name, version = manifest['name'], manifest['version']
+        if not re.fullmatch(r'[a-z0-9][a-z0-9._-]*', name) or not VERSION.fullmatch(version):
+            raise ValueError(f'Invalid package name or stable version: {name}@{version}')
+        if not re.fullmatch(r'[0-9a-f]{64}', manifest['zipSHA256']):
+            raise ValueError('Missing ZIP integrity hash')
+        if not manifest['url'].startswith('https://'):
+            raise ValueError('Package downloads must use HTTPS')
+        versions = listing['packages'].setdefault(name, {'versions': {}})['versions']
+        if version in versions:
+            raise ValueError(f'Duplicate package version: {name}@{version}')
+        versions[version] = copy.deepcopy(manifest)
     if not listing['packages']:
         raise ValueError('Refusing to deploy an empty package listing; publish a release first')
     return listing
 
 
+def check_preserved(previous, current):
+    if previous['id'] != current['id'] or previous['url'] != current['url']:
+        raise ValueError('Existing repository ID and URL must remain unchanged')
+    for name, package in previous['packages'].items():
+        for version, manifest in package['versions'].items():
+            updated = current['packages'].get(name, {}).get('versions', {}).get(version)
+            if updated is None:
+                raise ValueError(f'Published package disappeared: {name}@{version}')
+            if updated['url'] != manifest['url'] or updated['zipSHA256'] != manifest['zipSHA256']:
+                raise ValueError(f'Published package was replaced: {name}@{version}')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--metadata', type=Path, nargs='+', help='Offline validation instead of GitHub API')
+    parser.add_argument('--metadata', type=Path, nargs='+', help='Offline validation using MEISHI release metadata')
     args = parser.parse_args()
     source = json.loads((ROOT / 'source.json').read_text())
-    config = json.loads((ROOT / 'distribution.json').read_text())
-    metadata = [json.loads(p.read_text()) for p in args.metadata] if args.metadata else list(releases(config['repository']))
-    listing = make_listing(source, metadata, config['packages'])
+    if args.metadata:
+        manifests = [manifest for path in args.metadata for manifest in json.loads(path.read_text())['packages'].values()]
+    else:
+        manifests = collect(source)
+    listing = make_listing(source, manifests)
+    if not args.metadata:
+        try:
+            previous = fetch_json(source['url'])
+        except urllib.error.HTTPError as error:
+            if error.code != 404:
+                raise
+        else:
+            check_preserved(previous, listing)
     content = json.dumps(listing, ensure_ascii=False, indent=2) + '\n'
-    for name in ('vpm.json', 'index.json'):
-        (ROOT / 'Website' / name).write_text(content)
+    for filename in ('vpm.json', 'index.json'):
+        (ROOT / 'Website' / filename).write_text(content)
     print('Listing:', {name: list(item['versions']) for name, item in listing['packages'].items()})

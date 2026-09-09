@@ -3,30 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="VRChatアバターをMEISHI Pop!で使うためのエクスポーター。VCCまたはUnitypackageで導入できます。">
-  <title>MEISHI Pop! | Avatar Exporter</title>
+  <meta name="description" content="pipipigikenのUnity・VRChat向けツール配布リスト。ひとつのURLでツールの導入・更新を管理できます。">
+  <title>pipipigiken Packages | Unity・VRChatツール</title>
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
 <body>
   <main>
-    <p class="eyebrow">MEISHI Pop! <span>公開テスト版</span></p>
-    <h1>いつものアバターを、<br>MEISHI Pop!へ。</h1>
-    <p class="lead">UnityのVRChatアバタープロジェクトから、<br>MEISHI Pop!用の <code>.mpavatar</code> を書き出せます。</p>
+    <p class="eyebrow">pipipigiken Packages</p>
+    <h1>Unity・VRChatのツールを、<br>まとめて。</h1>
+    <p class="lead">この配布元をVCCに追加すると、公開中のツールを導入・更新できます。<br>新しいツールも同じ配布元に追加していきます。</p>
     <section>
-      <h2>エクスポーターをインストール</h2>
+      <h2>VCCに配布元を追加</h2>
       <p>更新しやすいVCCでの導入がおすすめです。</p>
       <div class="actions">
         <a class="button" href="vcc://vpm/addRepo?url=https%3A%2F%2Fvpm.pipipigiken.jp%2Fvpm.json">VCCに追加する</a>
-        <a class="button secondary" id="unitypackage" href="https://github.com/orange3134/vpm/releases/latest">Unitypackageをダウンロード</a>
       </div>
-      <p id="version" role="status">バージョンを確認しています…</p>
       <label for="repository">VCCに手動で追加するURL</label>
       <div class="copy-row"><input id="repository" readonly value="https://vpm.pipipigiken.jp/vpm.json"><button id="copy" type="button">コピー</button></div>
       <p id="copy-status" aria-live="polite"></p>
     </section>
     <section>
-      <h2>はじめかた</h2>
+      <h2>配布中のパッケージ</h2>
+      <div id="catalog" aria-live="polite">配布一覧を読み込んでいます…</div>
+    </section>
+    <section>
+      <h2>MEISHI Pop Exporterの使い方</h2>
+      <p>いつものアバターをMEISHI Pop!へ。アバターのUnityプロジェクトから、専用の <code>.mpavatar</code> を書き出せます。</p>
+      <a class="button secondary" id="unitypackage" href="https://github.com/orange3134/vpm/releases/latest">Unitypackageをダウンロード</a>
+      <p id="version" role="status">バージョンを確認しています…</p>
       <ol>
         <li>VRCSDK導入済みのアバタープロジェクトを用意し、Unityを閉じます。</li>
         <li><a href="https://modular-avatar.nadena.dev/ja/docs/intro">Modular Avatar / NDMFの配布元</a>をVCCへ追加し、NDMFを導入します。</li>
@@ -42,7 +47,7 @@
       </details>
     </section>
     <footer>
-      <p>公開テスト中です。ライセンスは検討中です。</p>
+      <p>MEISHI Pop Exporterは公開テスト中です。ライセンス・対応環境は各ツールの説明をご確認ください。</p>
       <a href="https://github.com/orange3134/vpm">使い方・ソース</a> ·
       <a href="https://github.com/orange3134/vpm/releases">過去のリリース</a> ·
       <a href="https://github.com/orange3134/vpm/issues">不具合報告</a>
