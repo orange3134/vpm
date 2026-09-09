@@ -47,7 +47,7 @@ fetch('./vpm.json').then(response => {
   if (!versions.length) throw new Error('No versions');
   const version = versions[0];
   document.querySelector('#version').textContent = `最新版 v${version}`;
-  document.querySelector('#unitypackage').href = `https://github.com/orange3134/vpm/releases/download/v${version}/MEISHI-Pop-Exporter-${version}.unitypackage`;
+  document.querySelector('#unitypackage').href = `https://github.com/orange3134/meishi-pop-exporter/releases/download/v${version}/MEISHI-Pop-Exporter-${version}.unitypackage`;
 }).catch(() => {
   document.querySelector('#catalog').textContent = '一覧を取得できませんでした。時間をおいて再読み込みしてください。';
   document.querySelector('#version').textContent = 'バージョン情報を取得できませんでした。GitHubのリリースページをご利用ください。';

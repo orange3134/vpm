@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Collect VPM ZIP releases from all repositories in source.json."""
-import argparse
 import copy
 import hashlib
 import io
@@ -105,7 +104,7 @@ def make_listing(source, manifests):
     return listing
 
 
-def check_preserved(previous, current):
+def check_preserved(previous, current, replacements=None):
     if previous['id'] != current['id'] or previous['url'] != current['url']:
         raise ValueError('Existing repository ID and URL must remain unchanged')
     for name, package in previous['packages'].items():
@@ -114,27 +113,26 @@ def check_preserved(previous, current):
             if updated is None:
                 raise ValueError(f'Published package disappeared: {name}@{version}')
             if updated['url'] != manifest['url'] or updated['zipSHA256'] != manifest['zipSHA256']:
-                raise ValueError(f'Published package was replaced: {name}@{version}')
+                transition = {
+                    'from': {key: manifest[key] for key in ('url', 'zipSHA256')},
+                    'to': {key: updated[key] for key in ('url', 'zipSHA256')},
+                }
+                if (replacements or {}).get(f'{name}@{version}') != transition:
+                    raise ValueError(f'Published package was replaced: {name}@{version}')
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--metadata', type=Path, nargs='+', help='Offline validation using MEISHI release metadata')
-    args = parser.parse_args()
     source = json.loads((ROOT / 'source.json').read_text())
-    if args.metadata:
-        manifests = [manifest for path in args.metadata for manifest in json.loads(path.read_text())['packages'].values()]
+    listing = make_listing(source, collect(source))
+    migration_file = ROOT / 'release-migrations.json'
+    replacements = json.loads(migration_file.read_text())['replacements'] if migration_file.exists() else {}
+    try:
+        previous = fetch_json(source['url'])
+    except urllib.error.HTTPError as error:
+        if error.code != 404:
+            raise
     else:
-        manifests = collect(source)
-    listing = make_listing(source, manifests)
-    if not args.metadata:
-        try:
-            previous = fetch_json(source['url'])
-        except urllib.error.HTTPError as error:
-            if error.code != 404:
-                raise
-        else:
-            check_preserved(previous, listing)
+        check_preserved(previous, listing, replacements)
     content = json.dumps(listing, ensure_ascii=False, indent=2) + '\n'
     for filename in ('vpm.json', 'index.json'):
         (ROOT / 'Website' / filename).write_text(content)

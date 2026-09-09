@@ -82,6 +82,28 @@ class MultiRepositoryTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 check_preserved(previous, broken)
 
+    def test_approved_migration_requires_exact_old_and_new_hashes(self):
+        old = manifest('jp.example.first', '1.2.3')
+        new = copy.deepcopy(old)
+        new['url'] = 'https://example.jp/new-location.zip'
+        new['zipSHA256'] = 'b' * 64
+        previous = make_listing(SOURCE, [old])
+        current = make_listing(SOURCE, [new])
+        transition = {'jp.example.first@1.2.3': {
+            'from': {key: old[key] for key in ('url', 'zipSHA256')},
+            'to': {key: new[key] for key in ('url', 'zipSHA256')},
+        }}
+        with self.assertRaises(ValueError):
+            check_preserved(previous, current)
+        check_preserved(previous, current, transition)
+        for side in ('from', 'to'):
+            incorrect = copy.deepcopy(transition)
+            incorrect['jp.example.first@1.2.3'][side]['zipSHA256'] = 'c' * 64
+            with self.assertRaises(ValueError):
+                check_preserved(previous, current, incorrect)
+        with self.assertRaises(ValueError):
+            check_preserved(current, previous, transition)
+
 
 if __name__ == '__main__':
     unittest.main()

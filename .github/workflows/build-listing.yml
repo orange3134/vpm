@@ -3,12 +3,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '17 * * * *'
-  workflow_run:
-    workflows: ['Release Exporter']
-    types: [completed]
   push:
     branches: [main]
-    paths: ['source.json', 'Website/**', 'scripts/build_listing.py', '.github/workflows/build-listing.yml']
+    paths: ['source.json', 'Website/**', 'scripts/build_listing.py', 'release-migrations.json', '.github/workflows/build-listing.yml']
 permissions:
   contents: read
   pages: write
@@ -18,7 +15,6 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build-listing:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

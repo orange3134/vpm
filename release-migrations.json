@@ -1,0 +1,25 @@
+{
+  "description": "User-approved relocation of the initial v0.2.2 release from vpm to meishi-pop-exporter, 2026-09-09. Exact URL and SHA-256 pairs only.",
+  "replacements": {
+    "com.avatarnamecard.avatar-package@0.2.2": {
+      "from": {
+        "url": "https://github.com/orange3134/vpm/releases/download/v0.2.2/com.avatarnamecard.avatar-package-0.2.2.zip",
+        "zipSHA256": "a9f909a0b7e9bd6c27bb5543a869d2f0955e20c39ac15cd4398b945cb3dd76f8"
+      },
+      "to": {
+        "url": "https://github.com/orange3134/meishi-pop-exporter/releases/download/v0.2.2/com.avatarnamecard.avatar-package-0.2.2.zip",
+        "zipSHA256": "4a1dba8dd35499af3e2cd593911cf97e87579b2be6cac6e441f1b57bc67b573a"
+      }
+    },
+    "com.avatarnamecard.exporter@0.2.2": {
+      "from": {
+        "url": "https://github.com/orange3134/vpm/releases/download/v0.2.2/com.avatarnamecard.exporter-0.2.2.zip",
+        "zipSHA256": "30ea4db83672943292e5a2e51ab1eaf0ff03dda35dce38c8e2ca1b031e6643d5"
+      },
+      "to": {
+        "url": "https://github.com/orange3134/meishi-pop-exporter/releases/download/v0.2.2/com.avatarnamecard.exporter-0.2.2.zip",
+        "zipSHA256": "dfa1e61e6cd1341762ac8e55140011f199d4d4977a4c8f3363ce9bfe5b93b93b"
+      }
+    }
+  }
+}
