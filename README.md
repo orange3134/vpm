@@ -8,7 +8,7 @@ VRChatアバターのUnityプロジェクトから、MEISHI Pop!用の `.mpavata
 
 ### VCC / VPM（おすすめ）
 
-1. VRCSDK Avatars導入済みのプロジェクトを用意します。
+1. VRCSDK Avatars導入済みのプロジェクトを用意し、Unityを閉じます。VCCでの導入・更新後にUnityを開き直します。
 2. [Modular Avatar / NDMFの公式配布元](https://modular-avatar.nadena.dev/ja/docs/intro)をVCCに追加します。NDMFが必要です。Modular Avatarはアバターが使用している場合に必要です。
 3. [配布ページ](https://vpm.pipipigiken.jp/)の「VCCに追加する」を押します。手動の場合はVCCの Settings → Packages → Add Repository に下記URLを指定します。
 
