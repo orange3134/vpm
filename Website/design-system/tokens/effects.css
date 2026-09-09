@@ -1,0 +1,23 @@
+:root{
+/* Borders — the kit's signature: hairline 1px for structure, 2px for anything interactive */
+--border-hairline:1px solid var(--ink);
+--border-bold:2px solid var(--ink);
+--border-width-bold:2px;
+
+/* Radii */
+--radius-sm:8px;      /* buttons, inputs, cards, tabs, dialogs */
+--radius-md:12px;     /* icon tiles */
+--radius-pill:9999px; /* badges, switches, avatars, progress, tags */
+
+/* Hard shadows — no blur, no spread, always ink */
+--shadow-sm:2px 2px 0px 0px var(--ink);
+--shadow-md:4px 4px 0px 0px var(--ink);
+--shadow-lg:6px 6px 0px 0px var(--ink);
+
+/* Press/hover offsets used with the hard shadow */
+--press-translate:2px; /* @kind spacing */
+--hover-translate:-1px; /* @kind spacing */
+--motion-fast:120ms; /* @kind other */
+--motion-ease:cubic-bezier(.2,.9,.3,1); /* @kind other */
+--disabled-opacity:0.5; /* @kind other */
+}

@@ -1,0 +1,46 @@
+:root{
+/* ── Base palette — transcribed verbatim from the Neo Brutalism UI kit ── */
+--ink:#1A1A1A;              /* rgb(26,26,26) — every border, every shadow, all body text */
+--ink-muted:#6B6B6B;        /* rgb(107,107,107) — secondary/meta text */
+--white:#FFFFFF;
+--cream:#FDF2E9;            /* rgb(253,242,233) — page background */
+--sand:#E8E0D4;             /* rgb(232,224,212) — muted surface */
+--coral:#FF6B6B;            /* rgb(255,107,107) */
+--teal:#4ECDC4;             /* rgb(78,205,196) */
+--yellow:#FFE66D;           /* rgb(255,230,109) */
+--purple:#A388EE;           /* rgb(163,136,238) */
+--red:#FF4757;              /* rgb(255,71,87) */
+--blue:#45B7D1;             /* rgb(69,183,209) */
+--peach:#F7A072;            /* rgb(247,160,114) */
+
+/* ── Brand layer — ピピピ技研 ── */
+--brand-orange:#FF7224;     /* primary brand colour */
+--brand-orange-deep:#E85D12;
+--brand-orange-tint:#FFE3D1;
+
+/* ── Semantic aliases ── */
+--surface-page:var(--cream);
+--surface-card:var(--white);
+--surface-muted:var(--sand);
+--surface-accent:var(--yellow);
+--surface-brand:var(--brand-orange);
+--text-body:var(--ink);
+--text-muted:var(--ink-muted);
+--text-on-brand:var(--ink);
+--text-placeholder:rgba(26,26,26,0.5);
+--border-default:var(--ink);
+--action-primary:var(--brand-orange);
+--action-secondary:var(--purple);
+--action-accent:var(--teal);
+--action-destructive:var(--red);
+--action-ghost:transparent;
+--state-info:var(--blue);
+--state-success:var(--teal);
+--state-warning:var(--yellow);
+--state-error:var(--coral);
+--state-info-surface:rgba(69,183,209,0.2);
+--state-success-surface:rgba(78,205,196,0.2);
+--state-warning-surface:var(--yellow);
+--state-error-surface:rgba(255,107,107,0.3);
+--footer-surface:rgba(255,107,107,0.2);
+}

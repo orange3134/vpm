@@ -1,0 +1,39 @@
+:root{
+/* Families — Space Grotesk leads, Zen Kaku Gothic New carries Japanese glyphs */
+--font-sans:"Space Grotesk","Zen Kaku Gothic New",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+--font-jp:"Zen Kaku Gothic New","Space Grotesk",sans-serif;
+--font-mono:Menlo,ui-monospace,SFMono-Regular,monospace;
+
+/* Weights present in the kit */
+--weight-regular:400;
+--weight-medium:500;
+--weight-bold:700;
+
+/* Size ramp — exact values from the source file (0.8rem-based scale) */
+--text-2xs:11.2px;   /* avatar initials */
+--text-xs:12px;      /* mono / code */
+--text-sm:12.8px;    /* badges, eyebrow labels, captions */
+--text-base:13.6px;  /* field labels, dense UI */
+--text-md:14.4px;    /* body copy, table cells */
+--text-lg:16px;      /* button label, input value */
+--text-xl:17.6px;    /* lead paragraph */
+--text-2xl:18px;     /* card title */
+--text-3xl:24px;     /* section heading (H2) */
+--text-4xl:40px;     /* page heading (H1) */
+
+/* Line heights — 1.5× on body, tight on headings */
+--leading-2xs:16.8px;
+--leading-sm:19.2px;
+--leading-base:20.4px;
+--leading-md:21.6px;
+--leading-lg:24px;
+--leading-xl:26.4px;
+--leading-2xl:27px;
+--leading-3xl:36px;
+--leading-4xl:60px;
+
+/* Tracking */
+--tracking-h1:-1px;
+--tracking-h2:-0.6px;
+--tracking-eyebrow:1.28px;  /* uppercase 12.8px section labels */
+}

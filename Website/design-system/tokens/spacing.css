@@ -1,0 +1,30 @@
+:root{
+/* Spacing — 4px base, as used across the kit */
+--space-1:2px;
+--space-2:4px;
+--space-3:6px;
+--space-4:8px;
+--space-5:10px;
+--space-6:12px;
+--space-7:14px;
+--space-8:16px;
+--space-9:22px;   /* card padding */
+--space-10:24px;  /* section gutter + section gap */
+--space-12:32px;  /* footer block padding */
+--space-16:48px;  /* gap between showcase sections */
+
+/* Control geometry */
+--control-h-sm:32.398px;
+--control-h-md:40px;
+--control-h-lg:44px;
+--field-h:48px;
+--tabs-h:45.594px;
+--accordion-header-h:46.805px;
+--table-row-h:57.195px;
+
+/* Layout */
+--layout-max:1104px;   /* content column inside the 1171px frame */
+--layout-gutter:24px;
+--field-w:320px;
+--card-w:352px;
+}

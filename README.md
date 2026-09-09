@@ -26,7 +26,7 @@ Unity・VRChat向けツールの共通VPM配布リストです。
 ]
 ```
 
-**Build Repo Listing** が各リポジトリの公開ReleaseからVPM ZIPを収集し、SHA-256を計算して共通の `vpm.json` と配布ページへ反映します。独自の `vpm-release.json` は不要です。
+**Build Repo Listing** が各リポジトリの公開ReleaseからVPM ZIPを収集し、SHA-256を計算して共通の `vpm.json` へ反映します。配布ページの Packages は `Website/index.html` にリンクを追加してください。独自の `vpm-release.json` は不要です。
 
 - ツールごとに独立したバージョン番号を使えます。
 - 一覧のID `jp.pipipigiken.vpm` と追加URLは維持します。登録済みの利用者は、VCCで一覧を更新すると新しいツールを選べます。
